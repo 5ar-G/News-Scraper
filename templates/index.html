@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Ephesis&family=Lexend+Deca:wght@100..900&display=swap"
+        rel="stylesheet" />
+    <title>News Scraper</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery -->
+</head>
+
+<body>
+    <!-- Decorations -->
+    <div class="decoration1"></div>
+    <div class="decoration2"></div>
+    <div class="decoration3"></div>
+    <div class="decoration4"></div>
+    <div class="decoration5"></div>
+    <div class="decoration6"></div>
+
+    <div class="container">
+        <h1>News Scraper</h1>
+        <button id="scrapeButton">Scrape</button> <!-- Button to trigger scraping -->
+
+        <div id="loadingIndicator" class="loading-spinner"></div> <!-- Loading spinner -->
+        <div id="articlesContainer"></div> <!-- Container to display scraped articles -->
+    </div>
+
+    <script>
+        // When the button is clicked
+        $("#scrapeButton").click(function () {
+
+            // Show the loading spinner and hide articles
+            $("#loadingIndicator").show();
+            $("#articlesContainer").hide();
+
+            // Send AJAX GET request to the /scrape route
+            $.get("/scrape", function (data) {
+                // Hide the loading spinner and show the articles
+                $("#loadingIndicator").hide();
+                $("#articlesContainer").show();
+
+                // Clear the existing articles
+                $("#articlesContainer").empty();
+
+                // Display the articles
+                if (data.length > 0) {
+                    data.forEach(function (article) {
+                        var articleHtml = `
+                            <div class="article">
+                                <h2>${article.title}</h2>
+                                <p>${article.description}</p>
+                                <p><strong>Category:</strong> <span class="category">${article.category}</span></p>
+                                <p><strong>Read more:</strong> <a href="${article.link}" target="_blank">${article.link}</a></p>
+                            </div>
+                            <div class="separator"></div>
+                        `;
+                        $("#articlesContainer").append(articleHtml);
+                    });
+                } else {
+                    $("#articlesContainer").html("<p>No articles found.</p>");
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
